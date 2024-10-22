@@ -9,4 +9,14 @@ class Api::V1::PostersController < ApplicationController
     render json: poster
   end
 
+  def update
+  render json: Poster.update(params[:id], posters_params)
+  end
+
+
+  private
+
+  def posters_params
+    params.require(:poster).permit(:name, :description, :price, :year, :vintage, :img_url )
+  end
 end
