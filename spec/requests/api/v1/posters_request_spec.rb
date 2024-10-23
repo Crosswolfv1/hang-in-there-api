@@ -116,9 +116,20 @@ describe "poster api" do
       img_url:  "https://plus.unsplash.com/premium_photo-1661293818249-fddbddf07a5d"  
     ).id
 
-    get "/api/v1/posters/#{id}"
+    id2 =     Poster.create(
+      name: "poster 2",
+      description: "more stuff.",
+      price: 68.00,
+      year: 2019,
+      vintage: true,
+      img_url:  "https://images.unsplash.com/photo-1620401537439-98e94c004b0d"
+    ).id
 
+    get "/api/v1/posters/#{id}"
     poster_base = JSON.parse(response.body, symbolize_names: true)
+
+    get "/api/v1/posters/#{id2}"
+    poster2_base = JSON.parse(response.body, symbolize_names: true)
 
     updated_attributes = {
       name: "updated poster",
@@ -129,11 +140,52 @@ describe "poster api" do
 
     poster_update = JSON.parse(response.body, symbolize_names: true)
 
+    get "/api/v1/posters/#{id2}"
+    poster2_base_post_update = JSON.parse(response.body, symbolize_names: true)
+
     expect(poster_base[:name]).not_to eq(poster_update[:name])
     expect(poster_base[:price]).not_to eq(poster_update[:price])
     
     expect(poster_base[:year]).to eq(poster_update[:year])
     expect(poster_base[:vintage]).to eq(poster_update[:vintage])
     expect(poster_base[:description]).to eq(poster_update[:description])
+
+    expect(poster2_base_post_update[:name]).to eq(poster2_base[:name])
+    expect(poster2_base_post_update[:price]).to eq(poster2_base[:price])
+    expect(poster2_base_post_update[:year]).to eq(poster2_base[:year])
+    expect(poster2_base_post_update[:vintage]).to eq(poster2_base[:vintage])
+    expect(poster2_base_post_update[:description]).to eq(poster2_base[:description])
   end
+
+  it "DESTROYS and existing poster" do
+
+    id = Poster.create(  
+      name: "poster1",
+      description: "stuff.",
+      price: 89.00,
+      year: 2018,
+      vintage: true,
+      img_url:  "https://plus.unsplash.com/premium_photo-1661293818249-fddbddf07a5d"  
+    ).id
+
+    id2 = Poster.create(
+      name: "poster 2",
+      description: "more stuff.",
+      price: 68.00,
+      year: 2019,
+      vintage: true,
+      img_url:  "https://images.unsplash.com/photo-1620401537439-98e94c004b0d"
+    ).id
+
+    expect(Poster.exists?(id: id)).to be true
+    expect(Poster.exists?(id: id2)).to be true
+
+    delete "/api/v1/posters/#{id}"
+
+    expect(response).to have_http_status(200)
+
+    expect(Poster.exists?(id: id)).to be false
+    expect(Poster.exists?(id: id2)).to be true
+  end
+
 end
