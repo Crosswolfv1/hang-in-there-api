@@ -101,10 +101,12 @@ describe "poster api" do
 
     poster = JSON.parse(response.body, symbolize_names: true)
 
-    expect(poster).to have_key(:id)
-    expect(poster[:id]).to be_an(Integer)
-    expect(poster[:id]).to eq(id)
-    expect(poster[:name]).to eq("poster 3")
+    expect(poster[:data]).to have_key(:id)
+    expect(poster[:data][:id]).to be_an(Integer)
+
+    expect(poster[:data][:attributes]).to have_key(:name)
+    expect(poster[:data][:attributes][:name]).to eq("poster 3")
+
   end
 
   it "updates an existing poster" do
@@ -144,18 +146,19 @@ describe "poster api" do
     get "/api/v1/posters/#{id2}"
     poster2_base_post_update = JSON.parse(response.body, symbolize_names: true)
 
-    expect(poster_base[:name]).not_to eq(poster_update[:name])
-    expect(poster_base[:price]).not_to eq(poster_update[:price])
-    
-    expect(poster_base[:year]).to eq(poster_update[:year])
-    expect(poster_base[:vintage]).to eq(poster_update[:vintage])
-    expect(poster_base[:description]).to eq(poster_update[:description])
 
-    expect(poster2_base_post_update[:name]).to eq(poster2_base[:name])
-    expect(poster2_base_post_update[:price]).to eq(poster2_base[:price])
-    expect(poster2_base_post_update[:year]).to eq(poster2_base[:year])
-    expect(poster2_base_post_update[:vintage]).to eq(poster2_base[:vintage])
-    expect(poster2_base_post_update[:description]).to eq(poster2_base[:description])
+    expect(poster_base[:data][:attributes][:name]).not_to eq(poster_update[:data][:attributes][:name])
+    expect(poster_base[:data][:attributes][:price]).not_to eq(poster_update[:data][:attributes][:price])
+    
+    expect(poster_base[:data][:attributes][:year]).to eq(poster_update[:data][:attributes][:year])
+    expect(poster_base[:data][:attributes][:vintage]).to eq(poster_update[:data][:attributes][:vintage])
+    expect(poster_base[:data][:attributes][:description]).to eq(poster_update[:data][:attributes][:description])
+
+    expect(poster2_base_post_update[:data][:attributes][:name]).to eq(poster2_base[:data][:attributes][:name])
+    expect(poster2_base_post_update[:data][:attributes][:price]).to eq(poster2_base[:data][:attributes][:price])
+    expect(poster2_base_post_update[:data][:attributes][:year]).to eq(poster2_base[:data][:attributes][:year])
+    expect(poster2_base_post_update[:data][:attributes][:vintage]).to eq(poster2_base[:data][:attributes][:vintage])
+    expect(poster2_base_post_update[:data][:attributes][:description]).to eq(poster2_base[:data][:attributes][:description])
   end
 
   it "DESTROYS and existing poster" do
