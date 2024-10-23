@@ -157,6 +157,35 @@ describe "poster api" do
     expect(poster2_base_post_update[:description]).to eq(poster2_base[:description])
   end
 
+  it "DESTROYS and existing poster" do
 
+    id = Poster.create(  
+      name: "poster1",
+      description: "stuff.",
+      price: 89.00,
+      year: 2018,
+      vintage: true,
+      img_url:  "https://plus.unsplash.com/premium_photo-1661293818249-fddbddf07a5d"  
+    ).id
+
+    id2 = Poster.create(
+      name: "poster 2",
+      description: "more stuff.",
+      price: 68.00,
+      year: 2019,
+      vintage: true,
+      img_url:  "https://images.unsplash.com/photo-1620401537439-98e94c004b0d"
+    ).id
+
+    expect(Poster.exists?(id: id)).to be true
+    expect(Poster.exists?(id: id2)).to be true
+
+    delete "/api/v1/posters/#{id}"
+
+    expect(response).to have_http_status(200)
+
+    expect(Poster.exists?(id: id)).to be false
+    expect(Poster.exists?(id: id2)).to be true
+  end
 
 end
