@@ -192,4 +192,22 @@ describe "poster api" do
     expect(Poster.exists?(id: id2)).to be true
   end
 
+  it "CREATES new posters" do 
+
+    create "/api/v1/posters/", params: {  name: "poster1",
+    description: "stuff.",
+    price: 89.00,
+    year: 2018,
+    vintage: true,
+    img_url:  "https://plus.unsplash.com/premium_photo-1661293818249-fddbddf07a5d"  }
+
+    create "api/v1/poster/", params: {  name: "poster 2",
+    description: "more stuff.",
+    price: 68.00,
+    year: 2019,
+    vintage: true,
+    img_url:  "https://images.unsplash.com/photo-1620401537439-98e94c004b0d"}
+
+    expect(response).to have_http_status(200)
+  end
 end
