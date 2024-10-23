@@ -105,4 +105,35 @@ describe "poster api" do
     expect(poster[:id]).to eq(id)
     expect(poster[:name]).to eq("poster 3")
   end
+
+  it "updates an existing poster" do
+    id = Poster.create(  
+      name: "poster1",
+      description: "stuff.",
+      price: 89.00,
+      year: 2018,
+      vintage: true,
+      img_url:  "https://plus.unsplash.com/premium_photo-1661293818249-fddbddf07a5d"  
+    ).id
+
+    get "/api/v1/posters/#{id}"
+
+    poster_base = JSON.parse(response.body, symbolize_names: true)
+
+    updated_attributes = {
+      name: "updated poster",
+      price: 69.69
+    }
+
+    patch "/api/v1/posters/#{id}", params: { poster: updated_attributes}
+
+    poster_update = JSON.parse(response.body, symbolize_names: true)
+
+    expect(poster_base[:name]).not_to eq(poster_update[:name])
+    expect(poster_base[:price]).not_to eq(poster_update[:price])
+    
+    expect(poster_base[:year]).to eq(poster_update[:year])
+    expect(poster_base[:vintage]).to eq(poster_update[:vintage])
+    expect(poster_base[:description]).to eq(poster_update[:description])
+  end
 end
