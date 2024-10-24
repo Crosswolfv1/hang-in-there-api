@@ -27,14 +27,9 @@ class Api::V1::PostersController < ApplicationController
   end
 
   def sort_posters(scope)
-    if (order = params.dig(:query, :sort))
-      column, direction = order.split(" ")
-
-      if column.presence_in(%w[created_at]) && direction.presence_in(%w[asc desc])
-        scope.order("#{column} #{direction}")
-      else
-        []
-      end
+    order = params[:sort]
+    if order.present? && order.presence_in(%w[asc desc])
+        scope.order(created_at: order)
     else
       scope.order(created_at: :desc)
     end
