@@ -192,4 +192,52 @@ describe "poster api" do
     expect(Poster.exists?(id: id2)).to be true
   end
 
+  it "sorts from a GET /api/v1/posters?sort=asc/desc " do # defaults sort to desc added sleep to have each poster have a different created_by
+    id1 = Poster.create(  
+      name: "poster1",
+      description: "stuff.",
+      price: 89.00,
+      year: 2018,
+      vintage: true,
+      img_url:  "https://plus.unsplash.com/premium_photo-1661293818249-fddbddf07a5d"  
+    ).id
+    sleep(1)
+    id2 = Poster.create(
+      name: "poster 2",
+      description: "more stuff.",
+      price: 68.00,
+      year: 2019,
+      vintage: true,
+      img_url:  "https://images.unsplash.com/photo-1620401537439-98e94c004b0d"
+    ).id
+    sleep(1)
+    id3 = Poster.create(  
+      name: "poster 3",
+      description: "stuff boogaloo.",
+      price: 127.00,
+      year: 2021,
+      vintage: false,
+      img_url:  "https://images.unsplash.com/photo-1551993005-75c4131b6bd8"
+    ).id
+
+    get '/api/v1/posters'
+
+    posters = JSON.parse(response.body, symbolize_names: true)
+
+    get '/api/v1/posters?sort=asc'
+
+    posters_asc = JSON.parse(response.body, symbolize_names: true)
+
+    get '/api/v1/posters?sort=desc'
+
+    posters_desc = JSON.parse(response.body, symbolize_names: true)
+
+    expect(posters).not_to eq(posters_asc)
+
+    expect(posters_asc[:data][0][:id]).to eq(id1)
+    expect(posters_asc[:data][2][:id]).to eq(id3)
+
+    expect(posters_desc[:data][0][:id]).to eq(id3)
+    expect(posters_desc[:data][2][:id]).to eq(id1)
+  end
 end
