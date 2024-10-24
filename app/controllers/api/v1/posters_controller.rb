@@ -19,6 +19,12 @@ class Api::V1::PostersController < ApplicationController
     render json: Poster.delete(params[:id])
   end
 
+  def create
+    poster =  Poster.create(posters_params)
+     render json: PosterSerializer.format_poster(poster)
+    #redirect "/posters/#{poster[:data][:id]}"
+  end
+
   private
 
   def posters_params
