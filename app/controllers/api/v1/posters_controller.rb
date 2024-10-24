@@ -2,6 +2,7 @@ class Api::V1::PostersController < ApplicationController
 
   def index
     posters = Poster.all
+    posters = sort_posters(posters)
     render json: PosterSerializer.format_posters(posters)
   end
 
@@ -29,5 +30,14 @@ class Api::V1::PostersController < ApplicationController
 
   def posters_params
     params.require(:poster).permit(:name, :description, :price, :year, :vintage, :img_url )
+  end
+
+  def sort_posters(scope)
+    order = params[:sort]
+    if order.present? && order.presence_in(%w[asc desc])
+        scope.order(created_at: order)
+    else
+      scope.order(created_at: :desc)
+    end
   end
 end
