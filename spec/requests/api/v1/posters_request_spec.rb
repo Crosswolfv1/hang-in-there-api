@@ -193,21 +193,23 @@ describe "poster api" do
   end
 
   it "CREATES new posters" do 
+    attributes = {
+      name: "poster1",
+      description: "more stuff",
+      price: 68.00,
+      year: 2019,
+      vintage: true,
+      img_url: "https://images.unsplash.com/photo-1620401537439-98e94c004b0d"
+    }
 
-    create "/api/v1/posters/", params: {  name: "poster1",
-    description: "stuff.",
-    price: 89.00,
-    year: 2018,
-    vintage: true,
-    img_url:  "https://plus.unsplash.com/premium_photo-1661293818249-fddbddf07a5d"  }
+    
+    post "/api/v1/posters", params: {poster: attributes}
 
-    create "api/v1/poster/", params: {  name: "poster 2",
-    description: "more stuff.",
-    price: 68.00,
-    year: 2019,
-    vintage: true,
-    img_url:  "https://images.unsplash.com/photo-1620401537439-98e94c004b0d"}
+    poster_new = JSON.parse(response.body, symbolize_names: true)
 
     expect(response).to have_http_status(200)
+
+    expect(poster_new[:data][:attributes][:name]).to eq("poster1")
+    expect(poster_new[:data][:attributes][:description]).to eq("more stuff")
   end
 end
