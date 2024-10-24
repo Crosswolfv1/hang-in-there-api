@@ -30,10 +30,8 @@ class PosterSerializer
           vintage: poster.vintage,
           img_url: poster.img_url
         }}
-        end,
-        meta: {
-          count: posters.count
-        }
+        end
+      
     }
   end
 end
