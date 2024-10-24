@@ -192,6 +192,27 @@ describe "poster api" do
     expect(Poster.exists?(id: id2)).to be true
   end
 
+  it "CREATES new posters" do 
+    attributes = {
+      name: "poster1",
+      description: "more stuff",
+      price: 68.00,
+      year: 2019,
+      vintage: true,
+      img_url: "https://images.unsplash.com/photo-1620401537439-98e94c004b0d"
+    }
+
+    
+    post "/api/v1/posters", params: {poster: attributes}
+
+    poster_new = JSON.parse(response.body, symbolize_names: true)
+
+    expect(response).to have_http_status(200)
+
+    expect(poster_new[:data][:attributes][:name]).to eq("poster1")
+    expect(poster_new[:data][:attributes][:description]).to eq("more stuff")
+  end
+  
   it "sorts from a GET /api/v1/posters?sort=asc/desc " do # defaults sort to desc added sleep to have each poster have a different created_by
     id1 = Poster.create(  
       name: "poster1",

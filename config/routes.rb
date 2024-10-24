@@ -13,5 +13,6 @@ Rails.application.routes.draw do
   
   patch "/api/v1/posters/:id", to: "api/v1/posters#update"
   delete "/api/v1/posters/:id", to: "api/v1/posters#destroy"
+  post "/api/v1/posters", to: "api/v1/posters#create"
 
 end
