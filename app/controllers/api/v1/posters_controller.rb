@@ -3,6 +3,7 @@ class Api::V1::PostersController < ApplicationController
   def index
     posters = Poster.all
     posters = sort_posters(posters)
+    posters = filter_posters(posters)
     render json: PosterSerializer.format_posters(posters)
   end
 
@@ -38,6 +39,37 @@ class Api::V1::PostersController < ApplicationController
         scope.order(created_at: order)
     else
       scope.order(created_at: :desc)
+    end
+  end
+
+  def filter_posters(scope)
+    name_filter(scope).then {max_filter(_1)}.then {min_filter(_1)}
+  end
+
+  def name_filter(scope)
+    filter = params[:name]
+    if filter.present? #&& filter.includes?(:name)
+      scope.where("LOWER(name) LIKE ?", "%#{filter}%")
+    else
+      scope
+    end
+  end
+
+  def max_filter(scope)
+    filter = params[:max_price]
+    if filter.present?
+      scope.where("price < ?", "#{filter}")
+    else
+      scope
+    end
+  end
+
+  def min_filter(scope)
+    filter = params[:min_price]
+    if filter.present?
+      scope.where("price > ?", "#{filter}")
+    else
+      scope
     end
   end
 end
