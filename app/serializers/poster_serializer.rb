@@ -31,6 +31,7 @@ class PosterSerializer
           img_url: poster.img_url
         }}
         end
+      
     }
   end
 end
