@@ -208,11 +208,16 @@ describe "poster api" do
     post "/api/v1/posters", params: {poster: attributes}
 
     poster_new = JSON.parse(response.body, symbolize_names: true)
+    id = poster_new[:data]
+    get "/api/v1/posters"
+
+    all_posters = JSON.parse(response.body, symbolize_names: true)
 
     expect(response).to have_http_status(200)
 
     expect(poster_new[:data][:attributes][:name]).to eq("poster1")
     expect(poster_new[:data][:attributes][:description]).to eq("more stuff")
+    expect(all_posters[:data]).to include(id)
   end
   
   it "sorts from a GET /api/v1/posters?sort=asc/desc " do # defaults sort to desc added sleep to have each poster have a different created_by
@@ -264,5 +269,87 @@ describe "poster api" do
     expect(posters_desc[:data][2][:id]).to eq(id1)
   end
 
+  describe "can query by parameters" do 
+    it "can query by name" do 
+      id1 = Poster.create(  
+        name: "stuff",
+        description: "stuff.",
+        price: 89.00,
+        year: 2018,
+        vintage: true,
+        img_url:  "https://plus.unsplash.com/premium_photo-1661293818249-fddbddf07a5d"  
+      ).id
   
+      id2 = Poster.create(
+        name: "more stuff",
+        description: "more stuff.",
+        price: 68.00,
+        year: 2019,
+        vintage: true,
+        img_url:  "https://images.unsplash.com/photo-1620401537439-98e94c004b0d"
+      ).id
+  
+      id3 = Poster.create(  
+        name: "stuff boogaloo",
+        description: "stuff boogaloo.",
+        price: 127.00,
+        year: 2021,
+        vintage: false,
+        img_url:  "https://images.unsplash.com/photo-1551993005-75c4131b6bd8"
+      ).id
+  
+      get "/api/v1/posters?name=boo"
+  
+      posters_boo = JSON.parse(response.body, symbolize_names: true)
+  
+      get "/api/v1/posters?name=stu"
+  
+      posters_stu = JSON.parse(response.body, symbolize_names: true)
+  
+      expect(posters_boo[:data][0][:id]).to eq(id3)
+      expect(posters_stu[:data][0][:id]).to eq(id3)
+      expect(posters_stu[:data][1][:id]).to eq(id2)
+      expect(posters_stu[:data][2][:id]).to eq(id1)
+    end
+
+    it "can query by price" do 
+      id1 = Poster.create(  
+        name: "stuff",
+        description: "stuff.",
+        price: 89.00,
+        year: 2018,
+        vintage: true,
+        img_url:  "https://plus.unsplash.com/premium_photo-1661293818249-fddbddf07a5d"  
+      ).id
+  
+      id2 = Poster.create(
+        name: "more stuff",
+        description: "more stuff.",
+        price: 68.00,
+        year: 2019,
+        vintage: true,
+        img_url:  "https://images.unsplash.com/photo-1620401537439-98e94c004b0d"
+      ).id
+  
+      id3 = Poster.create(  
+        name: "stuff boogaloo",
+        description: "stuff boogaloo.",
+        price: 127.00,
+        year: 2021,
+        vintage: false,
+        img_url:  "https://images.unsplash.com/photo-1551993005-75c4131b6bd8"
+      ).id
+  
+      get "/api/v1/posters?max_price=90"
+  
+      posters_less90 = JSON.parse(response.body, symbolize_names: true)
+  
+      get "/api/v1/posters?min_price=80"
+  
+      posters_greater80 = JSON.parse(response.body, symbolize_names: true)
+  
+      expect(posters_less90[:data].count).to eq(2)
+      expect(posters_greater80[:data].count).to eq(2)
+    end
+  end
 end
