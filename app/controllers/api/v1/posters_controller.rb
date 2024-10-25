@@ -15,7 +15,7 @@ class Api::V1::PostersController < ApplicationController
 
   def update
     poster = Poster.update(params[:id], posters_params)
-  render json: PosterSerializer.new(poster)
+    render json: PosterSerializer.new(poster)
   end
 
   def destroy
@@ -24,7 +24,7 @@ class Api::V1::PostersController < ApplicationController
 
   def create
     poster =  Poster.create(posters_params)
-     render json: PosterSerializer.new(poster)
+    render json: PosterSerializer.new(poster)
   end
 
   private
@@ -36,7 +36,7 @@ class Api::V1::PostersController < ApplicationController
   def sort_posters(scope)
     order = params[:sort]
     if order.present? && order.presence_in(%w[asc desc])
-        scope.order(created_at: order)
+      scope.order(created_at: order)
     else
       scope.order(created_at: :desc)
     end
@@ -48,7 +48,7 @@ class Api::V1::PostersController < ApplicationController
 
   def name_filter(scope)
     filter = params[:name]
-    if filter.present? #&& filter.includes?(:name)
+    if filter.present?
       scope.where("LOWER(name) LIKE ?", "%#{filter}%")
     else
       scope
