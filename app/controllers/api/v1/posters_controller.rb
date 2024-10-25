@@ -25,7 +25,6 @@ class Api::V1::PostersController < ApplicationController
   def create
     poster =  Poster.create(posters_params)
      render json: PosterSerializer.new(poster)
-    #redirect "/posters/#{poster[:data][:id]}"
   end
 
   private
