@@ -4,17 +4,18 @@ class Api::V1::PostersController < ApplicationController
     posters = Poster.all
     posters = sort_posters(posters)
     posters = filter_posters(posters)
-    render json: PosterSerializer.format_posters(posters)
+    options = {meta: {count: (posters.count)}}
+    render json: PosterSerializer.new(posters, options)
   end
 
   def show
     poster = Poster.find(params[:id])
-    render json: PosterSerializer.format_poster(poster)
+    render json: PosterSerializer.new(poster)
   end
 
   def update
     poster = Poster.update(params[:id], posters_params)
-  render json: PosterSerializer.format_poster(poster)
+  render json: PosterSerializer.new(poster)
   end
 
   def destroy
@@ -23,8 +24,7 @@ class Api::V1::PostersController < ApplicationController
 
   def create
     poster =  Poster.create(posters_params)
-     render json: PosterSerializer.format_poster(poster)
-    #redirect "/posters/#{poster[:data][:id]}"
+     render json: PosterSerializer.new(poster)
   end
 
   private

@@ -34,6 +34,8 @@ describe "poster api" do
     posters = JSON.parse(response.body, symbolize_names: true)
 
     expect(posters[:data].count).to eq(3)
+    expect(posters[:meta]).to have_key(:count)
+    expect(posters[:meta][:count]).to equal(posters[:data].count)
 
     posters[:data].each do |poster|
 
@@ -261,4 +263,6 @@ describe "poster api" do
     expect(posters_desc[:data][0][:id]).to eq(id3)
     expect(posters_desc[:data][2][:id]).to eq(id1)
   end
+
+  
 end
